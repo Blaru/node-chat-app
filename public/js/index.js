@@ -11,6 +11,4 @@ socket.on('disconnect',function(){
 socket.on('newMessage',function(message){
   console.log('new Message');
   console.log(JSON.stringify(message,undefined,2));
-  message.from = 'chrome@example.com';
-  socket.emit('createMessage',message)
 });
