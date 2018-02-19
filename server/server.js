@@ -1,4 +1,5 @@
-const message = require('./utils/message');
+
+const {generateMessage} = require('./utils/message');
 
 const path = require('path');
 const http = require('http');
@@ -17,14 +18,15 @@ app.use(express.static(publicPath));
 
 io.on('connection',(socket)=>{
   var id = client_n++;
-  socket.emit('newMessage',new message('Admin','Welcome to chat app'));
-  socket.broadcast.emit('newMessage',new message('Admin',`Client:${id} has joined the chat}`));
+  socket.emit('newMessage',generateMessage('Admin','Welcome to chat app'));
+  socket.broadcast.emit('newMessage',generateMessage('Admin',`Client:${id} has joined the chat`));
   console.log(`User: ${id} connected`);
-  socket.on('createMessage',(message)=>{
+  socket.on('createMessage',(message,callback)=>{
     message.createdAt = new Date().getTime();
     console.log(JSON.stringify(message,undefined,2));
-    //io.emit('newMessage',message);
-    socket.broadcast.emit('newMessage',message);
+    io.emit('newMessage',message);
+    //socket.broadcast.emit('newMessage',message);
+    callback('Server');
   });
   socket.on('disconnect',()=>{
     client_n--;
